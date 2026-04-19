@@ -3,6 +3,8 @@ services:
     image: itzg/minecraft-server:java21
     container_name: "${SERVER_NAME:-Minecraft}-mc-server"
     restart: unless-stopped
+    env_file:
+      - .env
     ports:
       - "25565:25565"
     environment:
