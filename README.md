@@ -81,3 +81,39 @@ docker compose down
 ```
 
 The Minecraft port **25565** is published to the host as defined in `compose.yml`. Connect with your client to `YOUR_HOST_OR_IP:25565` once the container is healthy and networking allows it.
+
+### RCON from the EC2 host
+
+The [itzg/minecraft-server](https://hub.docker.com/r/itzg/minecraft-server/) image enables RCON inside the container and ships `rcon-cli`. You do not need to expose RCON port 25575 on the public internet if you run commands over SSH on the server. Authentication uses `RCON_PASSWORD` from `.env`.
+
+**Container name**
+
+Compose sets `container_name` to `${SERVER_NAME:-Minecraft}-mc-server` (see `survival/compose.yml`). In the examples below, `Tobias-mc-server` matches `SERVER_NAME=Tobias` in `.env`. Replace it with your real container name if you changed `SERVER_NAME`, or read it from `docker ps` under the `NAMES` column. In the commands that follow, substitute `<container-name>` with that value.
+
+**Interactive RCON shell**
+
+`docker exec` runs a program inside a running container. `-i` keeps stdin open and `-t` allocates a terminal so you get an interactive prompt. Use this when you want to type server commands at RCON until you exit:
+
+```bash
+docker exec -it <container-name> rcon-cli
+```
+
+Example when `SERVER_NAME` is `Tobias`:
+
+```bash
+docker exec -it Tobias-mc-server rcon-cli
+```
+
+**One-shot command**
+
+Without `-it`, `docker exec` runs a single command and exits. Here the server broadcasts a chat message (passes `say Hello from RCON` to `rcon-cli`):
+
+```bash
+docker exec <container-name> rcon-cli say Hello from RCON
+```
+
+Example:
+
+```bash
+docker exec Tobias-mc-server rcon-cli say Hello from RCON
+```
